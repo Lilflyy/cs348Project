@@ -1,9 +1,11 @@
 import React, {Fragment, useEffect, useState} from "react";
 const ListTeachers = () => {
     const [teachers, setTeachers] = useState([])
+    const [students, setStudents] = useState([])
+    const [teacher, setTeacher] = useState()
     const getTeachers = async ()=> {
         try {
-            const response = await fetch(" http://localhost:4000/teacher", {
+            const response = await fetch("http://localhost:4000/teacher", {
                 method: "GET",
             })
             const jsonData = await response.json()
@@ -22,7 +24,20 @@ const ListTeachers = () => {
 
     const dropDown =(e) => {
         const teacher = JSON.parse(e.target.value)
+        setTeacher(teacher)
         console.log("teacher id:", teacher.teacher_id)
+    }
+
+    const getStudents = async () => {
+        try {
+            const response = await fetch("http://localhost:4000/getStudents/" + teacher.teacher_id, {
+                method: "GET",
+            })
+            const jsonData = await response.json()
+            setStudents(jsonData)
+        } catch (err) {
+            console.log(err.message)
+        }
     }
 
     return ( 
@@ -55,7 +70,30 @@ const ListTeachers = () => {
                 value={JSON.stringify(teacher)}>{teacher.email}</option>
             ))}
         </select>
-        <p>your students:</p>
+        <button onClick={() => getStudents()}> view students </button>
+        {students.length != 0 && students.map(student => (
+             <table className="table">
+             <thead>
+               <tr>
+                 <th>Firstname</th>
+                 <th>Lastname</th>
+                 <th>Email</th>
+               </tr>
+             </thead>
+             <tbody>
+               
+               {students.map(student =>(
+                 <tr>
+                 <td>{student.first_name}</td>
+                 <td>{student.last_name}</td>
+                 <td>{ student.email }</td>
+                 <td>delete</td>
+                 <td>edit</td>
+               </tr>
+               ))}
+             </tbody>
+           </table>
+        ))}
 
         </Fragment>
         

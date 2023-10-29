@@ -153,6 +153,18 @@ app.get("/getTeachers/:id", async(req, res) => {
     }
 })
 
+// view assigned student 
+app.get("/getStudents/:id", async(req, res) => {
+    try{
+        const { id } = req.params
+        const allt = await pool.query("SELECT first_name, last_name, email from student t join studentTeacher st on t.student_id = st.student_id where st.teacher_id = $1", [id])
+        
+        res.json(allt.rows)
+    } catch(err) {
+        console.log(err.message)
+    }
+})
+
 app.listen(process.env.PORT, () => {
     console.log('listening on port', process.env.PORT)
 })
