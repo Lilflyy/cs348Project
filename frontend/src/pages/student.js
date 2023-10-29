@@ -1,10 +1,16 @@
 import React, {Fragment, useEffect, useState} from "react";
+import { json } from "react-router-dom";
 
 const Student = () => {
     const [students, setStudents] = useState([]);
     const [first_name, setFirst_name] = useState('')
     const [last_name, setLast_name] = useState('')
     const [email, setEmail] = useState('')
+    const [student, setStudent] = useState()
+    const [teachers, setTeachers] = useState([])
+    const [view, setView] = useState(false)
+    const [enroll, setEnroll] = useState(false)
+    const [instructor, setInstructor] = useState(false)
     
     const getStudents = async () => {
         try {
@@ -18,6 +24,22 @@ const Student = () => {
             
         } catch (error) {
             console.log(error.message)
+        }
+    }
+
+    const getTeachers = async () => {
+        setEnroll(false)
+        setInstructor(true)
+        try {
+            console.log(student.student_id)
+            const response = await fetch("http://localhost:4000/getTeachers/" + student.student_id, {
+                method:"GET"
+            })
+            const jsonData = await response.json()
+            
+            setTeachers(jsonData)
+        } catch (err) {
+            console.log(err.message)
         }
     }
 
@@ -41,10 +63,39 @@ const Student = () => {
             console.log(error.message)
         }
     }
+    const onEnroll = async () => {
+        setEnroll(true)
+        setInstructor(false)
+        try {
+            const response = await fetch("http://localhost:4000/enrollTeacher/" + student.student_id, {
+                method: "GET"
+            })
+            const jsonData = await response.json()
+            console.log(jsonData)
+            setTeachers(jsonData)
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
 
     useEffect(() => {
         getStudents()
     })
+
+    const dropDown =(e) => {
+        if (e.target.value != "") {
+        setView(true)
+        const s = JSON.parse(e.target.value)
+        console.log(s)
+        setStudent(s)
+        } else {
+            setView(false)
+            setInstructor(false)
+            setEnroll(false)
+            setStudent()
+            setTeachers([])
+        }
+    }
     return ( 
         <Fragment>
             <h1>Student Page</h1>
@@ -70,7 +121,7 @@ const Student = () => {
 </thead>
 <tbody>
   
-  {students.map(student =>(
+  {students.length !=0 &&students.map(student =>(
     <tr>
     <td>{student.first_name}</td>
     <td>{student.last_name}</td>
@@ -81,6 +132,57 @@ const Student = () => {
   ))}
 </tbody>
 </table>
+
+<p>select your student email</p>
+<select onChange={dropDown}>
+            <option value={""}></option>
+            {students.map(student => (
+                <option
+                value={JSON.stringify(student)}>{student.email}</option>
+                
+            ))}
+        </select>
+        
+
+        {view && <button onClick={() => getTeachers()}> view instuctors </button>}
+        {view && <button onClick={() => onEnroll()}>Enroll</button>}
+        {enroll && (
+            <p> choose a instructor to enroll </p>
+
+        )}
+        {view && teachers.length!= 0 && (
+            <table className="table">
+            <thead>
+              <tr>
+                <th>Firstname</th>
+                <th>Lastname</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody>
+               
+               {teachers.length != 0 && teachers.map(teacher =>(
+                 <tr>
+                 <td>{teacher.first_name}</td>
+                 <td>{teacher.last_name}</td>
+                 <td>{teacher.email }</td>
+                 {instructor &&
+                 <td>delete</td>
+                 
+                 }
+                 
+                 {enroll && <td>enroll</td>}
+               </tr>
+               ))}
+             </tbody>
+
+            </table>
+        )}
+        
+        
+
+
+        
    
 
     </Fragment>

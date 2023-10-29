@@ -3,6 +3,7 @@ const ListTeachers = () => {
     const [teachers, setTeachers] = useState([])
     const [students, setStudents] = useState([])
     const [teacher, setTeacher] = useState()
+    const [view, setView] = useState(false)
     const getTeachers = async ()=> {
         try {
             const response = await fetch("http://localhost:4000/teacher", {
@@ -23,9 +24,16 @@ const ListTeachers = () => {
     })
 
     const dropDown =(e) => {
+        if (e.target.value != "") {
+        setView(true)
         const teacher = JSON.parse(e.target.value)
+        
         setTeacher(teacher)
         console.log("teacher id:", teacher.teacher_id)
+        } else {
+            setView(false)
+            setStudents([])
+        }
     }
 
     const getStudents = async () => {
@@ -65,12 +73,14 @@ const ListTeachers = () => {
   </table>
         <h1>Who are you</h1>
         <select onChange={dropDown}>
+            <option value={""}></option>
             {teachers.map(teacher => (
                 <option
                 value={JSON.stringify(teacher)}>{teacher.email}</option>
+                
             ))}
         </select>
-        <button onClick={() => getStudents()}> view students </button>
+        {view && <button onClick={() => getStudents()}> view students </button>}
         {students.length != 0 && students.map(student => (
              <table className="table">
              <thead>

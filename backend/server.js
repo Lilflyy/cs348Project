@@ -165,6 +165,20 @@ app.get("/getStudents/:id", async(req, res) => {
     }
 })
 
+// view unenrolled teachers
+
+app.get("/enrollTeacher/:id", async(req,res)=> {
+    try {
+        const {id} = req.params
+        const et = await pool.query("select t.teacher_id, t.first_name, t.last_name, t.email from teacher t join (select teacher_id from teacher where teacher_id NOT IN (select st.teacher_id from studentteacher st where st.student_id = $1)) AS st on t.teacher_id = st.teacher_id", [id])
+        res.json(et.rows)
+    } catch (error) {
+        console.log(error.message)
+    }
+    
+})
+
+
 app.listen(process.env.PORT, () => {
     console.log('listening on port', process.env.PORT)
 })
