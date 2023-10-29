@@ -96,6 +96,19 @@ const Student = () => {
             setTeachers([])
         }
     }
+
+    const enrollClick = async (teacher) => {
+        try {
+            const response = await fetch("http://localhost:4000/enroll/" + student.student_id + "/" + teacher.teacher_id, {
+                method: "POST"
+            })
+            if (response.ok) {
+                onEnroll()
+            }
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
     return ( 
         <Fragment>
             <h1>Student Page</h1>
@@ -171,7 +184,7 @@ const Student = () => {
                  
                  }
                  
-                 {enroll && <td>enroll</td>}
+                 {enroll && <td><button onClick={() => {enrollClick(teacher)}}>enroll</button></td>}
                </tr>
                ))}
              </tbody>

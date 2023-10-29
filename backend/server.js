@@ -64,7 +64,7 @@ app.delete("/teacher/:id", async(req,res) => {
         const teacher = await pool.query("DELETE FROM teacher WHERE teacher_id = $1", [id])
         res.json("deleted")
     } catch (error) {
-        console.log(err.message)
+        console.log(error.message)
     }
 })
 
@@ -94,7 +94,7 @@ app.get("/student", async(req, res) => {
 // quiz routes
 
 // create quiz
-app.post("/quiz/:id", async(req, res) => {
+app.delete("/quiz/:id", async(req, res) => {
     try{
         const { id } = req.params
         const { quiz_name } = req.body
@@ -145,7 +145,7 @@ app.post("/st/:id/:quizId", async(req, res) => {
 app.get("/getTeachers/:id", async(req, res) => {
     try{
         const { id } = req.params
-        const allt = await pool.query("SELECT first_name, last_name, email from teacher t join studentTeacher st on t.teacher_id = st.teacher_id where st.student_id = $1", [id])
+        const allt = await pool.query("SELECT DISTINCT first_name, last_name, email from teacher t join studentTeacher st on t.teacher_id = st.teacher_id where st.student_id = $1", [id])
         
         res.json(allt.rows)
     } catch(err) {
@@ -157,7 +157,7 @@ app.get("/getTeachers/:id", async(req, res) => {
 app.get("/getStudents/:id", async(req, res) => {
     try{
         const { id } = req.params
-        const allt = await pool.query("SELECT first_name, last_name, email from student t join studentTeacher st on t.student_id = st.student_id where st.teacher_id = $1", [id])
+        const allt = await pool.query("SELECT DISTINCT t.student_id, t.first_name, t.last_name, t.email from student t join studentTeacher st on t.student_id = st.student_id where st.teacher_id = $1", [id])
         
         res.json(allt.rows)
     } catch(err) {
@@ -177,6 +177,17 @@ app.get("/enrollTeacher/:id", async(req,res)=> {
     }
     
 })
+
+// enroll a student to a teacher
+app.post("/enroll/:id/:teacher_id", async(req,res) => {
+    try {
+        const enroll = await pool.query("INSERT INTO studentteacher(student_id, teacher_id) VALUES($1, $2) RETURNING *", [req.params.id, req.params.teacher_id])
+        res.json(enroll.rows[0])
+        
+    } catch (error) {
+        console.log(error.message)
+    }
+}) 
 
 
 app.listen(process.env.PORT, () => {
