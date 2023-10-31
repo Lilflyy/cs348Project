@@ -6,6 +6,7 @@ import ListTeachers from './component/ListTeachers';
 import AddTeachers from './component/AddTeacher';
 import NavBar from './component/NavBar';
 import Student from './pages/student';
+import Quiz from './pages/quiz';
 function App() {
   return (
     <BrowserRouter>
@@ -16,7 +17,7 @@ function App() {
         
         <Route path='/' element={<Teacher/>} />
         <Route path='/student' element={<Student/>}/>
-      
+        <Route path ='/quiz' element={<Quiz/>}/>
       </Routes>
       </div>
      
