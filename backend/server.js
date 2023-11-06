@@ -93,8 +93,18 @@ app.get("/student", async(req, res) => {
 
 // quiz routes
 
+// view all quizzes
+app.get("/quiz", async(req,res) => {
+    try {
+        const allq = await pool.query("select q.quiz_id,q.quiz_name,t.first_name,t.last_name, t.email from quiz q join teacher t on q.teacher_id = t.teacher_id")
+        res.json(allq.rows)
+    } catch (err) {
+        console.log(err.message)
+    }
+})
+
 // create quiz
-app.delete("/quiz/:id", async(req, res) => {
+app.post("/quiz/:id", async(req, res) => {
     try{
         const { id } = req.params
         const { quiz_name } = req.body
@@ -107,16 +117,28 @@ app.delete("/quiz/:id", async(req, res) => {
 })
 
 // delete quiz
-app.post("/quiz/:id", async(req, res) => {
+app.delete("/quiz/:id", async(req, res) => {
     try{
         const { id } = req.params
-        const { quiz_name } = req.body
         const quiz = await pool.query("DELETE from quiz where quiz_id = $1", [id])
         
     } catch(err) {
         console.log(err.message)
     }
 })
+
+// update quiz
+app.put("/quiz/:id", async(req,res) => {
+    try {
+        const { id } = req.params
+        const  { quiz_name } = req.body
+        const q = await pool.query("UPDATE quiz SET quiz_name=$1", [quiz_name])
+    } catch (error) {
+        console.log(error.message)
+    }
+
+})
+
 // assign student teacher relation
 app.post("/st/:id/:teacherId", async(req, res) => {
     try {
@@ -138,8 +160,18 @@ app.post("/st/:id/:quizId", async(req, res) => {
 })
 
 // view all quizzes for a student
+app.get("/stquiz/:id", async(req,res) => {
+    try {
+        const ts = await pool.query("select t.quiz_id, t.quiz_name, te.first_name, te.last_name from (select sq.quiz_id, q.quiz_name,q.teacher_id from studentquiz sq join quiz q on sq.quiz_id = q.quiz_id where sq.student_id = $1) as t join teacher te on t.teacher_id = te.teacher_id;", [req.params.id])
+        res.json(ts.rows)
+    } catch (error) {
+        console.log(error.message)
+    }
 
+})
 // view un attempted quizzes for a student
+
+// attemp a quiz for student
 
 // view assigned teacher for a student
 app.get("/getTeachers/:id", async(req, res) => {
