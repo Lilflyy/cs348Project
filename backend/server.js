@@ -110,6 +110,7 @@ app.post("/quiz/:id", async(req, res) => {
         const { quiz_name } = req.body
         const newQuiz = await pool.query("INSERT INTO quiz (quiz_name, teacher_id) VALUES($1, $2) RETURNING *", [quiz_name, id])
         res.json(newQuiz.rows[0])
+        console.log("quiz created")
         
     } catch(err) {
         console.log(err.message)
@@ -121,6 +122,7 @@ app.delete("/quiz/:id", async(req, res) => {
     try{
         const { id } = req.params
         const quiz = await pool.query("DELETE from quiz where quiz_id = $1", [id])
+        res.json("deleted")
         
     } catch(err) {
         console.log(err.message)
@@ -133,6 +135,7 @@ app.put("/quiz/:id", async(req,res) => {
         const { id } = req.params
         const  { quiz_name } = req.body
         const q = await pool.query("UPDATE quiz SET quiz_name=$1 where quiz_id=$2", [quiz_name, id])
+        res.json("updated")
     } catch (error) {
         console.log(error.message)
     }
@@ -190,7 +193,7 @@ app.get("/assign/:id", async(req,res) => {
     }
 })
 
-// view un attempted quizzes for a student
+// view unattempted quizzes for a student
 
 // attemp a quiz for student
 

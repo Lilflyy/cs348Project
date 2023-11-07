@@ -3,6 +3,22 @@ import EditQuiz from "./EditQuiz";
 
 const ListQuizzes = (data) => {
 
+  const fetchQuizzes = async () => {
+        
+    try {
+        
+        const response = await fetch("http://localhost:4000/quiz", {
+            method: "GET",
+        })
+        const jsonData = await response.json()
+        
+        data.setData(jsonData)
+        
+    } catch (error) {
+        
+    }
+}
+    
     const onAssign = async(id) => {
         const response = await fetch("http://localhost:4000/assign/" + id, {
                 method:"GET",
@@ -11,8 +27,14 @@ const ListQuizzes = (data) => {
     
     const onDelete = async(id) => {
         const response = await fetch("http://localhost:4000/quiz/" + id, {
-                method:"DELETE",
+                method:"DELETE"
             })
+            if (response.ok) {
+              data.setData(data.data.filter(quiz => quiz.quiz_id != id))
+              console.log("deleted")
+              console.log(data.data)
+            }
+            
     }
     return (  
         <Fragment>
@@ -33,7 +55,7 @@ const ListQuizzes = (data) => {
         <td>{quiz.first_name} {quiz.last_name}</td>
         <td>{ quiz.email }</td>
         {data.isTeacher&&<td><button onClick={() => {onDelete(quiz.quiz_id)}}>delete</button></td>}
-        {data.isTeacher&&<td><EditQuiz quiz={quiz}/></td>}
+        {data.isTeacher&&<td><EditQuiz quiz={quiz} fetch={fetchQuizzes}/></td>}
         {data.isTeacher&&<td><button onClick={() => {onAssign(quiz.quiz_id)}}>assign</button></td>}
       </tr>
       ))}

@@ -159,9 +159,9 @@ const Quiz = () => {
             {selectedStudent && <button className="ml-2">attempted quizzes</button>}
             {selectedStudent && <button className="ml-2">unattempted quizzes</button>}
             {selectedTeacher && <button className="ml-2" onClick={() => {fetchQuizzes()}}>view all quizzes</button>}
-            {selectedTeacher && <CreateQuiz teacher={teacher}/>}
+            {selectedTeacher && <CreateQuiz teacher={teacher} fetch={fetchQuizzes}/>}
             {selectedTeacher && <button className="ml-2" onClick={() => {viewCreated(teacher.teacher_id)}}>view created quizzes</button>}
-            {quizzes && view && <ListQuizzes data={quizzes} isStudent ={isStudent} isTeacher={isTeacher} />}
+            {quizzes && view && <ListQuizzes data={quizzes} setData={setQuizzes} isStudent ={isStudent} isTeacher={isTeacher} />}
            
             
         </Fragment>

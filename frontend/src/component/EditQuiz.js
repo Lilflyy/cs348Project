@@ -1,6 +1,7 @@
 import { Fragment, useState } from "react";
 
-const EditQuiz = ({quiz}) => {
+const EditQuiz = (prop) => {
+    const {quiz} = prop
     const[quiz_name, setQuiz_name] = useState(quiz.quiz_name)
     const onEdit = async (e) => {
         e.preventDefault()
@@ -12,7 +13,9 @@ const EditQuiz = ({quiz}) => {
                 body: JSON.stringify(body) 
 
             })
-
+            if (response.ok) {
+              prop.fetch()
+            }
         } catch (error) {
             console.log(error.message)
         }

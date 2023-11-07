@@ -1,10 +1,12 @@
 import { Fragment, useState } from "react";
 
-const CreateQuiz = ({teacher}) => {
+const CreateQuiz = (prop) => {
+    const {teacher} = prop
     const [quiz_name, setQuiz_name] = useState('')
     const onCreate = async (e) => {
         e.preventDefault()
-        const body = {quiz_name}
+        console.log(teacher.teacher_id)
+        
         try {
             const body = {quiz_name}
             const response = await fetch("http://localhost:4000/quiz/" + teacher.teacher_id, {
@@ -12,6 +14,10 @@ const CreateQuiz = ({teacher}) => {
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(body) 
             })
+            if (response.ok) {
+              prop.fetch()
+            }
+            
 
         } catch (error) {
             console.log(error.message)
