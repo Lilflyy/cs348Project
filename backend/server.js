@@ -96,7 +96,7 @@ app.get("/student", async(req, res) => {
 // view all quizzes
 app.get("/quiz", async(req,res) => {
     try {
-        const allq = await pool.query("select q.quiz_id,q.quiz_name,t.first_name,t.last_name, t.email from quiz q join teacher t on q.teacher_id = t.teacher_id")
+        const allq = await pool.query("select q.quiz_id,q.quiz_name,t.first_name,t.last_name, t.email from quiz q join teacher t on q.teacher_id = t.teacher_id order by q.quiz_id")
         res.json(allq.rows)
     } catch (err) {
         console.log(err.message)
@@ -132,7 +132,7 @@ app.put("/quiz/:id", async(req,res) => {
     try {
         const { id } = req.params
         const  { quiz_name } = req.body
-        const q = await pool.query("UPDATE quiz SET quiz_name=$1", [quiz_name])
+        const q = await pool.query("UPDATE quiz SET quiz_name=$1 where quiz_id=$2", [quiz_name, id])
     } catch (error) {
         console.log(error.message)
     }
@@ -169,6 +169,27 @@ app.get("/stquiz/:id", async(req,res) => {
     }
 
 })
+
+// view created quiz
+app.get("/teacherquiz/:id", async(req,res) => {
+    try {
+        const ts = await pool.query("select q.quiz_id, q.quiz_name, t.first_name, t.last_name, t.email from quiz q join teacher t on q.teacher_id = t.teacher_id where q.teacher_id = $1", [req.params.id])
+        res.json(ts.rows)
+    } catch (error) {
+        console.log(error.message)
+    }
+
+})
+
+// assign quiz to all student
+app.get("/assign/:id", async(req,res) => {
+    try {
+        const t = await pool.query("CALL assignQuizzes($1)", [req.params.id])
+    } catch (error) {
+        console.log(error.message)
+    }
+})
+
 // view un attempted quizzes for a student
 
 // attemp a quiz for student

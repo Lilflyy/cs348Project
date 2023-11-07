@@ -1,9 +1,21 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
+import EditQuiz from "./EditQuiz";
 
 const ListQuizzes = (data) => {
- 
+
+    const onAssign = async(id) => {
+        const response = await fetch("http://localhost:4000/assign/" + id, {
+                method:"GET",
+            })
+    }
+    
+    const onDelete = async(id) => {
+        const response = await fetch("http://localhost:4000/quiz/" + id, {
+                method:"DELETE",
+            })
+    }
     return (  
-        
+        <Fragment>
     <div>
             <table className="table">
     <thead>
@@ -15,21 +27,21 @@ const ListQuizzes = (data) => {
     </thead>
     <tbody>
       
-      {data.data.length !== 0 && data.data.map(quiz =>(
+      {data.data && data.data.map(quiz =>(
         <tr>
         <td>{quiz.quiz_name}</td>
         <td>{quiz.first_name} {quiz.last_name}</td>
         <td>{ quiz.email }</td>
-        {data.isTeacher&&<td>delete</td>}
-        {data.isTeacher&&<td>edit</td>}
-        {data.isTeacher&&<td>assign</td>}
+        {data.isTeacher&&<td><button onClick={() => {onDelete(quiz.quiz_id)}}>delete</button></td>}
+        {data.isTeacher&&<td><EditQuiz quiz={quiz}/></td>}
+        {data.isTeacher&&<td><button onClick={() => {onAssign(quiz.quiz_id)}}>assign</button></td>}
       </tr>
       ))}
     </tbody>
   </table>
 
         </div>
-
+        </Fragment>
     );
 }
  

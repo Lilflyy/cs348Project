@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useState } from "react";
 import ListQuizzes from "../component/ListQuizzes";
+import CreateQuiz from "../component/CreateQuiz";
 const Quiz = () => {
     const [isStudent, setIsStudent] = useState(false)
     const [isTeacher, setIsTeacher] = useState(false)
@@ -43,7 +44,9 @@ const Quiz = () => {
     }
     
     const fetchQuizzes = async () => {
+        
         try {
+            setQuizzes([])
             const response = await fetch("http://localhost:4000/quiz", {
                 method: "GET",
             })
@@ -59,7 +62,10 @@ const Quiz = () => {
 
 
 
+
+
     const dropDown = (e) => {
+        setView(false)
         if (e.target.value == "") {
             console.log("nothing selected")
             setIsStudent(false)
@@ -109,6 +115,22 @@ const Quiz = () => {
         }
     }
 
+    const viewCreated = async(id) => {
+        try {
+            setQuizzes([])
+            const response = await fetch("http://localhost:4000/teacherquiz/" + id, {
+                method: "GET",
+            })
+            const jsonData = await response.json()
+            
+            setQuizzes(jsonData)
+            console.log(quizzes)
+            setView(true)
+        } catch (error) {
+            
+        }
+    
+    }
 
     return ( 
         <Fragment>
@@ -137,9 +159,9 @@ const Quiz = () => {
             {selectedStudent && <button className="ml-2">attempted quizzes</button>}
             {selectedStudent && <button className="ml-2">unattempted quizzes</button>}
             {selectedTeacher && <button className="ml-2" onClick={() => {fetchQuizzes()}}>view all quizzes</button>}
-            {selectedTeacher && <button className="ml-2">create quizzes</button>}
-            {selectedTeacher && <button className="ml-2">view created quizzes</button>}
-            {quizzes && view && <ListQuizzes data={quizzes} isStudent ={isStudent} isTeacher={isTeacher}/>}
+            {selectedTeacher && <CreateQuiz teacher={teacher}/>}
+            {selectedTeacher && <button className="ml-2" onClick={() => {viewCreated(teacher.teacher_id)}}>view created quizzes</button>}
+            {quizzes && view && <ListQuizzes data={quizzes} isStudent ={isStudent} isTeacher={isTeacher} />}
            
             
         </Fragment>
