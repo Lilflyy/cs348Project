@@ -1,5 +1,5 @@
-import { Fragment, useState } from "react";
-
+import { Fragment, useEffect, useState } from "react";
+import ListQuizzes from "../component/ListQuizzes";
 const Quiz = () => {
     const [isStudent, setIsStudent] = useState(false)
     const [isTeacher, setIsTeacher] = useState(false)
@@ -9,6 +9,9 @@ const Quiz = () => {
     const [teacher, setTeacher] = useState('')
     const [selectedTeacher, setSelectedTeacher] = useState(false)
     const [selectedStudent, setSelectedStudent] = useState(false)
+    const [quizzes, setQuizzes] = useState([])
+    const [view, setView] = useState(false)
+
     const fetchStudents = async () => {
         try {
             const response = await fetch("http://localhost:4000/student", {
@@ -38,7 +41,21 @@ const Quiz = () => {
             console.log(error.message)
         }
     }
-
+    
+    const fetchQuizzes = async () => {
+        try {
+            const response = await fetch("http://localhost:4000/quiz", {
+                method: "GET",
+            })
+            const jsonData = await response.json()
+            
+            setQuizzes(jsonData)
+            console.log(quizzes)
+            setView(true)
+        } catch (error) {
+            
+        }
+    }
 
 
 
@@ -119,9 +136,11 @@ const Quiz = () => {
 
             {selectedStudent && <button className="ml-2">attempted quizzes</button>}
             {selectedStudent && <button className="ml-2">unattempted quizzes</button>}
-            {selectedTeacher && <button className="ml-2">view all quizzes</button>}
+            {selectedTeacher && <button className="ml-2" onClick={() => {fetchQuizzes()}}>view all quizzes</button>}
             {selectedTeacher && <button className="ml-2">create quizzes</button>}
             {selectedTeacher && <button className="ml-2">view created quizzes</button>}
+            {quizzes && view && <ListQuizzes data={quizzes} isStudent ={isStudent} isTeacher={isTeacher}/>}
+           
             
         </Fragment>
        
