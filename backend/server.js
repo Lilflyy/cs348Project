@@ -193,8 +193,19 @@ app.get("/assign/:id", async(req,res) => {
     }
 })
 
-// view unattempted quizzes for a student
+// view attempted quizzes for a student
 
+
+// view unattempted quizzes for a student
+app.get("/unattempt/:id", async(req,res) => {
+    try {
+        const { id } = req.params
+        const uq = await pool.query("select temp.quiz_id, temp.quiz_name, t.first_name, t.last_name, t.email from teacher t join (select q.quiz_id, q.quiz_name, q.teacher_id from quiz q where q.quiz_id NOT IN (select quiz_id from studentquizattempt where student_id = $1)) AS temp ON t.teacher_id = temp.teacher_id;",[id])
+        res.json(uq.rows)
+    } catch (error) {
+        console.log(error.message)
+    }
+})
 // attemp a quiz for student
 
 // view assigned teacher for a student
