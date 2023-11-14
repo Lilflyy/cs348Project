@@ -200,7 +200,7 @@ app.get("/assign/:id", async(req,res) => {
 app.get("/unattempt/:id", async(req,res) => {
     try {
         const { id } = req.params
-        const uq = await pool.query("select temp.quiz_id, temp.quiz_name, t.first_name, t.last_name, t.email from teacher t join (select q.quiz_id, q.quiz_name, q.teacher_id from quiz q where q.quiz_id NOT IN (select quiz_id from studentquizattempt where student_id = $1)) AS temp ON t.teacher_id = temp.teacher_id;",[id])
+        const uq = await pool.query("select sq.quiz_id, sq.quiz_name, t.first_name, t.last_name, t.email from teacher t join (select q.quiz_id, q.quiz_name, q.teacher_id from quiz q join (select s.quiz_id from studentquiz s where s.student_id = $1 AND s.quiz_id NOT IN (select st.quiz_id from studentquizattempt st where st.student_id = s.student_id)) AS temp ON q.quiz_id = temp.quiz_id) AS sq ON t.teacher_id = sq.teacher_id;",[id])
         res.json(uq.rows)
     } catch (error) {
         console.log(error.message)
