@@ -79,7 +79,6 @@ const ListTeachers = () => {
         <td>{teacher.last_name}</td>
         <td>{ teacher.email }</td>
         <td onClick={()=>{deleteTeacher(teacher)}}>delete</td>
-        <td>edit</td>
       </tr>
       ))}
     </tbody>
@@ -110,8 +109,6 @@ const ListTeachers = () => {
                  <td>{student.first_name}</td>
                  <td>{student.last_name}</td>
                  <td>{ student.email }</td>
-                 <td>delete</td>
-                 <td>edit</td>
                </tr>
                ))}
              </tbody>

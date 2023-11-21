@@ -139,8 +139,6 @@ const Student = () => {
     <td>{student.first_name}</td>
     <td>{student.last_name}</td>
     <td>{ student.email }</td>
-    <td>delete</td>
-    <td>edit</td>
   </tr>
   ))}
 </tbody>
@@ -179,10 +177,7 @@ const Student = () => {
                  <td>{teacher.first_name}</td>
                  <td>{teacher.last_name}</td>
                  <td>{teacher.email }</td>
-                 {instructor &&
-                 <td>delete</td>
-                 
-                 }
+                
                  
                  {enroll && <td><button onClick={() => {enrollClick(teacher)}}>enroll</button></td>}
                </tr>

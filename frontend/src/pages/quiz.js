@@ -79,6 +79,12 @@ const Quiz = () => {
     const fetchAttempted = async () => {
         try {
             setIsAttempt(false)
+            const response = await fetch("http://localhost:4000/attempt/" + student.student_id, {
+                method: "GET",
+            })
+            const jsonData = await response.json()
+            setQuizzes(jsonData)
+            setView(true)
         } catch (error) {
             
         }
@@ -183,7 +189,8 @@ const Quiz = () => {
             {selectedTeacher && <button className="ml-2" onClick={() => {fetchQuizzes()}}>view all quizzes</button>}
             {selectedTeacher && <CreateQuiz teacher={teacher} fetch={fetchQuizzes}/>}
             {selectedTeacher && <button className="ml-2" onClick={() => {viewCreated(teacher.teacher_id)}}>view created quizzes</button>}
-            {quizzes && view && <ListQuizzes data={quizzes} setData={setQuizzes} isStudent ={isStudent} isTeacher={isTeacher} student={student} isAttempt={isAttempt}/>}
+            {quizzes && view && <ListQuizzes data={quizzes} setData={setQuizzes} isStudent ={isStudent} isTeacher={isTeacher}
+            student={student} isAttempt={isAttempt} fetchUnAttempted={fetchUnattempted}/>}
            
             
         </Fragment>

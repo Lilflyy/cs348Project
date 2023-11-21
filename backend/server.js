@@ -194,7 +194,15 @@ app.get("/assign/:id", async(req,res) => {
 })
 
 // view attempted quizzes for a student
-
+app.get("/attempt/:id", async(req,res) => {
+    try {
+        const { id } = req.params
+        const aq = await pool.query("select q.quiz_id, q.quiz_name, t.first_name, t.last_name, t.email from quiz q join teacher t on q.teacher_id = t.teacher_id where q.quiz_id IN (select sq.quiz_id from studentquizattempt sq where sq.student_id = $1);",[id])
+        res.json(aq.rows)
+    } catch (error) {
+        console.log(error.message)
+    }
+})
 
 // view unattempted quizzes for a student
 app.get("/unattempt/:id", async(req,res) => {
@@ -207,7 +215,16 @@ app.get("/unattempt/:id", async(req,res) => {
     }
 })
 // attemp a quiz for student
-
+app.get("/attempt/:id/:student_id", async(req,res) => {
+    try {
+        const { id } = req.params
+        const uq = await pool.query("INSERT INTO studentquizattempt(quiz_id, student_id) VALUES($1, $2)",[req.params.id, req.params.student_id])
+        res.json(uq.rows[0])
+        console.log("quiz attempted")
+    } catch (error) {
+        console.log(error.message)
+    }
+})
 // view assigned teacher for a student
 app.get("/getTeachers/:id", async(req, res) => {
     try{

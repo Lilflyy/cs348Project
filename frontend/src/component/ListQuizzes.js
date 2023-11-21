@@ -36,6 +36,12 @@ const ListQuizzes = (data) => {
             }
             
     }
+    const onAttempt = async(id) => {
+      const response = await fetch("http://localhost:4000/attempt/" + id + "/" + data.student.student_id, {
+                method:"GET",
+            })
+            data.fetchUnAttempted()
+    }
     return (  
         <Fragment>
     <div>
@@ -54,7 +60,7 @@ const ListQuizzes = (data) => {
         <td>{quiz.quiz_name}</td>
         <td>{quiz.first_name} {quiz.last_name}</td>
         <td>{ quiz.email }</td>
-        {data.student && data.isAttempt && <td><button>attempt</button></td>}
+        {data.student && data.isAttempt && <td><button onClick={() => {onAttempt(quiz.quiz_id)}}>attempt</button></td>}
         {data.isTeacher&&<td><button onClick={() => {onDelete(quiz.quiz_id)}}>delete</button></td>}
         {data.isTeacher&&<td><EditQuiz quiz={quiz} fetch={fetchQuizzes}/></td>}
         {data.isTeacher&&<td><button onClick={() => {onAssign(quiz.quiz_id)}}>assign</button></td>}
